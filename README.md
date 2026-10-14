@@ -1,11 +1,20 @@
 # School 21 Desktop
 
 Неофициальный клиент платформы [platform.21-school.ru](https://platform.21-school.ru/) для Windows, macOS и Linux.
-Есть и версия для Android: [school_21_mobile](https://github.com/Dlzxn/school_21_mobile).
 
 > Приложение не связано со Школой 21 официально: показывает сайт платформы и данные её API, только читая их.
 > Логин и пароль (если включить автовход) хранятся в защищённом хранилище системы и отправляются только на
 > `auth.21-school.ru`.
+
+## Экосистема School 21
+
+Неофициальные клиенты платформы для всех устройств — с автовходом, закладками, «Где сидит пир» и уведомлениями.
+
+| Устройство | Репозиторий | Скачать |
+|---|---|---|
+| Android | [school_21_mobile](https://github.com/Dlzxn/school_21_mobile) | [последний релиз](https://github.com/Dlzxn/school_21_mobile/releases/latest) |
+| Windows · macOS · Linux | [school_21_desktop](https://github.com/Dlzxn/school_21_desktop) | [последний релиз](https://github.com/Dlzxn/school_21_desktop/releases/latest) |
+| iPhone | [school_21_ios](https://github.com/Dlzxn/school_21_ios) | в разработке |
 
 ## Возможности
 
