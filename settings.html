@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Настройки — School 21</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <h1>Настройки</h1>
+
+      <div class="header">
+        <div class="logo">21</div>
+        <div>
+          <div class="title">School 21</div>
+          <div class="muted" id="version">Версия …</div>
+        </div>
+      </div>
+
+      <div class="section">Аккаунт</div>
+      <div class="card">
+        <div class="row">
+          <div class="icon" data-icon="lock"></div>
+          <div class="body">
+            <div class="label">Автовход</div>
+            <div class="hint" id="login-status">Выключен</div>
+          </div>
+          <button class="btn outline hidden" id="login-change">Изменить</button>
+        </div>
+        <div class="stack hidden" id="login-form">
+          <div class="muted">
+            Когда платформа завершит сессию, приложение само введёт логин и пароль. Данные хранятся в
+            защищённом хранилище системы и отправляются только на auth.21-school.ru.
+          </div>
+          <input class="field" id="login" placeholder="Логин" autocomplete="username" />
+          <input class="field" id="password" placeholder="Пароль" type="password" autocomplete="current-password" />
+          <div class="error hidden" id="login-error"></div>
+          <div class="inline">
+            <button class="btn" id="login-save">Проверить и сохранить</button>
+            <button class="btn outline hidden" id="login-cancel">Отмена</button>
+          </div>
+        </div>
+        <div class="row hidden" id="logout-row">
+          <div class="icon grey" data-icon="x"></div>
+          <div class="body"><div class="label">Отключить и удалить данные</div></div>
+          <button class="btn outline" id="logout">Отключить</button>
+        </div>
+      </div>
+
+      <div class="section">Уведомления</div>
+      <div class="card">
+        <label class="row">
+          <div class="icon green" data-icon="bell"></div>
+          <div class="body">
+            <div class="label">Напоминания о моих событиях</div>
+            <div class="hint">За 15 минут до того, на что вы записаны: события, проверки</div>
+          </div>
+          <span class="switch"><input type="checkbox" data-setting="notifyAgenda" /><span></span></span>
+        </label>
+        <label class="row">
+          <div class="icon" data-icon="chat"></div>
+          <div class="body">
+            <div class="label">Уведомления платформы</div>
+            <div class="hint">То же, что в «колокольчике» на сайте</div>
+          </div>
+          <span class="switch"><input type="checkbox" data-setting="notifyPlatform" /><span></span></span>
+        </label>
+        <label class="row">
+          <div class="icon cyan" data-icon="calendar"></div>
+          <div class="body">
+            <div class="label">Новые события кампуса</div>
+            <div class="hint">Мероприятия, экзамены и тесты из официального API</div>
+          </div>
+          <span class="switch"><input type="checkbox" data-setting="notifyEvents" /><span></span></span>
+        </label>
+      </div>
+      <div class="note">Проверка примерно раз в 30 минут, пока приложение работает (в том числе свёрнутым в трей).</div>
+
+      <div class="section">Приложение</div>
+      <div class="card">
+        <label class="row">
+          <div class="icon" data-icon="power"></div>
+          <div class="body">
+            <div class="label">Запускать вместе с системой</div>
+            <div class="hint">Свёрнутым в трей — чтобы уведомления приходили сразу</div>
+          </div>
+          <span class="switch"><input type="checkbox" id="autostart" /><span></span></span>
+        </label>
+        <label class="row">
+          <div class="icon grey" data-icon="tray"></div>
+          <div class="body">
+            <div class="label">Сворачивать в трей при закрытии</div>
+            <div class="hint">Крестик прячет окно, «Выход» — в меню значка в трее</div>
+          </div>
+          <span class="switch"><input type="checkbox" data-setting="closeToTray" /><span></span></span>
+        </label>
+      </div>
+
+      <div class="section">О приложении</div>
+      <div class="card">
+        <div class="row clickable" id="check-update">
+          <div class="icon" data-icon="refresh"></div>
+          <div class="body">
+            <div class="label">Проверить обновления</div>
+            <div class="hint" id="update-status">Нажмите, чтобы проверить</div>
+          </div>
+          <div class="chevron">›</div>
+        </div>
+        <div class="row clickable" id="open-repo">
+          <div class="icon cyan" data-icon="code"></div>
+          <div class="body">
+            <div class="label">Исходный код и релизы</div>
+            <div class="hint">github.com/Dlzxn/school_21_desktop</div>
+          </div>
+          <div class="chevron">›</div>
+        </div>
+      </div>
+
+      <div class="section">Обратная связь</div>
+      <div class="card">
+        <div class="row clickable" id="report-bug">
+          <div class="icon red" data-icon="alert"></div>
+          <div class="body">
+            <div class="label">Сообщить об ошибке</div>
+            <div class="hint">Нашли баг или есть идея? Создайте issue на GitHub — опишите, что делали, и приложите скриншот</div>
+          </div>
+          <div class="chevron">›</div>
+        </div>
+        <div class="row clickable" id="author">
+          <div class="icon green" data-icon="user"></div>
+          <div class="body">
+            <div class="label">Автор</div>
+            <div class="hint">Dlzxn · School 21: combinef</div>
+          </div>
+          <div class="chevron">›</div>
+        </div>
+      </div>
+
+      <div class="note">
+        Приложение не связано со Школой 21 официально: оно показывает сайт платформы и данные её API, только
+        читая их. Есть и версия для Android: github.com/Dlzxn/school_21_mobile
+      </div>
+    </main>
+    <script type="module" src="/src/settings.ts"></script>
+  </body>
+</html>

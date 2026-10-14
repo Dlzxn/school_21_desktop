@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Где сидит пир — School 21</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <h1>Где сидит пир</h1>
+
+      <div class="card hidden" id="needs-login">
+        <div class="stack">
+          <div>Данные берутся из официального API Школы 21, для него нужен ваш логин и пароль. Включите автовход в настройках.</div>
+          <button class="btn" id="open-settings">Открыть настройки</button>
+        </div>
+      </div>
+
+      <form id="search-form">
+        <input class="field" id="query" placeholder="Логин пира" autocomplete="off" spellcheck="false" />
+        <div class="inline" style="margin-top: 12px">
+          <button class="btn" type="submit" id="search">Найти</button>
+          <button class="btn outline" type="button" id="me"><span data-icon="user" data-size="16"></span>Я</button>
+        </div>
+      </form>
+
+      <div class="spinner hidden" id="spinner"></div>
+      <div class="error hidden" id="error" style="margin-top: 18px"></div>
+
+      <div class="card hidden" id="result" style="margin-top: 20px">
+        <div class="stack" style="padding: 20px; gap: 16px">
+          <div style="display: flex; align-items: center; gap: 14px">
+            <div class="avatar" id="avatar"></div>
+            <div style="min-width: 0">
+              <div style="font-size: 20px; font-weight: 700" id="peer-login"></div>
+              <div class="muted" id="peer-subtitle"></div>
+            </div>
+          </div>
+          <div class="inline">
+            <span class="pill" id="peer-place"></span>
+            <span class="chip hidden" id="peer-coalition"></span>
+          </div>
+          <div class="level">
+            <div class="num" id="peer-level"></div>
+            <div>
+              <div class="muted">уровень</div>
+              <div class="xp" id="peer-xp"></div>
+            </div>
+            <div class="spacer"></div>
+            <div style="text-align: right" id="peer-next-box">
+              <div class="muted" id="peer-next-label"></div>
+              <div class="xp" id="peer-next"></div>
+            </div>
+          </div>
+          <div class="tiles" id="peer-points"></div>
+          <div class="muted" id="peer-logtime"></div>
+          <button class="btn tonal block" id="open-profile">Открыть профиль на платформе</button>
+        </div>
+      </div>
+    </main>
+    <script type="module" src="/src/peer.ts"></script>
+  </body>
+</html>
