@@ -1,6 +1,6 @@
 [package]
 name = "school21-desktop"
-version = "1.0.0"
+version = "1.1.0"
 description = "Неофициальный десктоп-клиент платформы School 21"
 authors = ["Dlzxn"]
 license = "MIT"
@@ -20,6 +20,8 @@ tauri-plugin-opener = "2"
 tauri-plugin-notification = "2"
 tauri-plugin-autostart = "2"
 tauri-plugin-single-instance = "2"
+tauri-plugin-updater = "2"
+futures-util = { version = "0.3", default-features = false, features = ["std"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", features = ["time", "sync", "macros"] }

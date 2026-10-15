@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Мои друзья — School 21</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <h1>Мои друзья</h1>
+
+      <div class="card hidden" id="needs-login">
+        <div class="stack">
+          <div>Данные берутся из официального API Школы 21, для него нужен ваш логин и пароль. Включите автовход в настройках.</div>
+          <button class="btn" id="open-settings">Открыть настройки</button>
+        </div>
+      </div>
+
+      <div id="content" class="hidden">
+        <form id="add-form" class="inline">
+          <input class="field" id="login" placeholder="Логин друга" autocomplete="off" spellcheck="false" style="flex: 1" />
+          <button class="btn" type="submit" id="add">Добавить</button>
+        </form>
+        <div class="error hidden" id="add-error" style="margin-top: 10px"></div>
+
+        <div class="card" style="margin-top: 18px">
+          <label class="row">
+            <div class="icon green" data-icon="bell"></div>
+            <div class="body">
+              <div class="label">Сообщать, когда друг в кампусе</div>
+              <div class="hint">Проверка примерно раз в 30 минут, пока приложение работает</div>
+            </div>
+            <span class="switch"><input type="checkbox" id="notify" /><span></span></span>
+          </label>
+        </div>
+
+        <div class="section-row">
+          <div class="section" id="summary">Друзья</div>
+          <button class="btn outline small" id="refresh"><span data-icon="refresh" data-size="14"></span>Обновить</button>
+        </div>
+        <div class="card" id="list"></div>
+        <div class="note hidden" id="empty">
+          Добавьте логины друзей — здесь будет видно, кто сейчас в кампусе и за каким компьютером.
+        </div>
+      </div>
+    </main>
+    <script type="module" src="/src/friends.ts"></script>
+  </body>
+</html>

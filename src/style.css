@@ -152,3 +152,21 @@ h1 { font-size: 26px; font-weight: 700; margin: 0 0 18px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .hidden { display: none !important; }
+
+/* «Мои друзья» */
+.section-row { display: flex; align-items: center; justify-content: space-between; margin: 24px 6px 8px; }
+.section-row .section { margin: 0; }
+.btn.small { padding: 6px 12px; font-size: 13px; }
+.avatar.sm { position: relative; width: 40px; height: 40px; font-size: 17px; }
+.avatar.sm::after {
+  content: ""; position: absolute; right: -1px; bottom: -1px; width: 11px; height: 11px; border-radius: 50%;
+  background: var(--text-2); border: 2px solid var(--card);
+}
+.avatar.sm.online::after { background: var(--green); }
+.on-text { color: var(--green); font-weight: 600; }
+.small { font-size: 12px; font-weight: 400; margin-left: 6px; }
+.mini {
+  flex: none; display: grid; place-items: center; width: 32px; height: 32px; border: none; border-radius: 10px;
+  background: none; color: var(--text-2); cursor: pointer;
+}
+.mini:hover { background: rgba(255, 255, 255, 0.08); color: var(--text); }

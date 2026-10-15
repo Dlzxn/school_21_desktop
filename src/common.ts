@@ -4,7 +4,10 @@ export interface Settings {
   notifyPlatform: boolean;
   notifyAgenda: boolean;
   notifyEvents: boolean;
+  notifyFriends: boolean;
+  autoUpdate: boolean;
   closeToTray: boolean;
+  friends: string[];
 }
 
 export interface Workstation { clusterName: string; row: string; number: number }

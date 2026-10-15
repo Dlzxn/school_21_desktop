@@ -10,6 +10,7 @@ use time::{Duration, OffsetDateTime, UtcOffset};
 
 use crate::api::{AgendaItem, ApiError};
 use crate::config::{REMIND_BEFORE_MINUTES, SYNC_INTERVAL_MINUTES};
+use crate::friends;
 use crate::state::AppState;
 use crate::store;
 
@@ -84,6 +85,31 @@ pub async fn run_once(app: &AppHandle) {
             schedule_reminders(app, &state, &agenda, now);
         }
     }
+    if settings.notify_friends && !settings.friends.is_empty() {
+        check_friends(app, &state, &settings.friends).await;
+    }
+}
+
+/// «Друг пришёл в кампус». Первая проверка только запоминает, кто где.
+async fn check_friends(app: &AppHandle, state: &AppState, friends: &[String]) {
+    let now = friends::places(&state.api, friends).await;
+    let before = state.sync_state.lock().unwrap().friend_places.clone();
+    if let Some(before) = &before {
+        for (login, ws) in friends::arrivals(before, &now).into_iter().take(5) {
+            notify(
+                app,
+                &format!("{login} теперь в кампусе"),
+                &format!("{} · ряд {}, место {}", ws.cluster_name, ws.row.to_uppercase(), ws.number),
+            );
+        }
+    }
+    // Для друзей, по которым запрос не удался, оставляем прежнее значение.
+    let mut merged = before.unwrap_or_default();
+    for (login, ws) in &now {
+        merged.insert(login.clone(), ws.as_ref().map(friends::place_label).unwrap_or_default());
+    }
+    merged.retain(|login, _| friends.contains(login));
+    state.update_sync_state(|s| s.friend_places = Some(merged));
 }
 
 async fn check_platform(app: &AppHandle, state: &AppState) -> Result<(), ApiError> {

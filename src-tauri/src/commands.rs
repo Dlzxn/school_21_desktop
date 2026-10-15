@@ -1,4 +1,4 @@
-//! Команды для локальных окон (настройки, пир). Окну с сайтом платформы они недоступны.
+//! Команды для локальных окон (настройки, пир, друзья). Окну с сайтом платформы они недоступны.
 
 use serde::Serialize;
 use tauri::{AppHandle, Manager, State};
@@ -9,6 +9,7 @@ use crate::config::{AUTH_HOST, GITHUB_REPO};
 use crate::state::AppState;
 use crate::store::{self, Credentials, Settings};
 use crate::sync;
+use crate::{friends, update};
 use crate::windows;
 
 #[derive(Serialize)]
@@ -35,6 +36,8 @@ pub struct PeerInfo {
 pub struct UpdateInfo {
     pub version: String,
     pub url: String,
+    /// Можно поставить из приложения (иначе — открыть страницу релиза).
+    pub installable: bool,
 }
 
 fn err(e: ApiError) -> String {
@@ -55,7 +58,13 @@ pub fn get_info(app: AppHandle, state: State<'_, AppState>) -> AppInfo {
 pub fn save_settings(app: AppHandle, state: State<'_, AppState>, settings: Settings) {
     // Закладки и стартовую страницу меняет меню «⋯» — из окна настроек их не перезаписываем.
     let current = state.settings();
-    state.save_settings(Settings { bookmarks: current.bookmarks, start_url: current.start_url, ..settings });
+    // Список друзей меняет окно «Мои друзья».
+    state.save_settings(Settings {
+        bookmarks: current.bookmarks,
+        start_url: current.start_url,
+        friends: current.friends,
+        ..settings
+    });
     sync::wake(&app);
 }
 
@@ -116,10 +125,55 @@ pub fn set_autostart(app: AppHandle, enabled: bool) -> Result<(), String> {
     if enabled { launcher.enable() } else { launcher.disable() }.map_err(|e| e.to_string())
 }
 
+/// Новая версия: через updater (latest.json), а если он недоступен — по API релизов GitHub.
 #[tauri::command]
-pub async fn check_update(state: State<'_, AppState>) -> Result<Option<UpdateInfo>, String> {
+pub async fn check_update(app: AppHandle, state: State<'_, AppState>) -> Result<Option<UpdateInfo>, String> {
+    if let Ok(found) = update::check(&app).await {
+        return Ok(found.map(|version| UpdateInfo { version, url: String::new(), installable: true }));
+    }
     let (version, url) = state.api.latest_release().await.map_err(err)?;
-    Ok(api::is_newer(&version, env!("CARGO_PKG_VERSION")).then_some(UpdateInfo { version, url }))
+    Ok(api::is_newer(&version, env!("CARGO_PKG_VERSION")).then_some(UpdateInfo { version, url, installable: false }))
+}
+
+/// Скачать и поставить новую версию; приложение перезапустится.
+#[tauri::command]
+pub async fn install_update(app: AppHandle) -> Result<bool, String> {
+    update::install(&app).await
+}
+
+#[tauri::command]
+pub async fn friends_list(state: State<'_, AppState>) -> Result<Vec<friends::FriendInfo>, String> {
+    let logins = state.settings().friends;
+    Ok(friends::details(&state.api, &logins).await)
+}
+
+/// Добавить друга: логин проверяется по Open API. Возвращает логин в каноническом виде.
+#[tauri::command]
+pub async fn friends_add(app: AppHandle, state: State<'_, AppState>, login: String) -> Result<String, String> {
+    let login = friends::normalize(&login);
+    let current = state.settings().friends;
+    if current.contains(&login) {
+        return Err("already".into());
+    }
+    if current.len() >= friends::MAX_FRIENDS {
+        return Err("limit".into());
+    }
+    let participant = state.api.participant(&login).await.map_err(err)?;
+    let login = participant.login.to_lowercase();
+    state.update_settings(|s| {
+        if !s.friends.contains(&login) {
+            s.friends.push(login.clone());
+        }
+    });
+    // Новый состав — заново «первая проверка», чтобы не прислать лишнего.
+    state.update_sync_state(|s| s.friend_places = None);
+    sync::wake(&app);
+    Ok(login)
+}
+
+#[tauri::command]
+pub fn friends_remove(state: State<'_, AppState>, login: String) {
+    state.update_settings(|s| s.friends.retain(|f| *f != login));
 }
 
 #[tauri::command]

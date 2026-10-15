@@ -11,6 +11,7 @@ use crate::autologin;
 use crate::config::{is_internal_host, START_URL};
 use crate::state::AppState;
 use crate::store::Bookmark;
+use crate::update;
 
 /// Фон окон — как фон сайта, чтобы при загрузке не было белой вспышки.
 const BACKGROUND: Color = Color(29, 38, 51, 255);
@@ -175,7 +176,7 @@ pub fn open_platform(app: &AppHandle, path: &str) {
     }
 }
 
-/// Локальные окна: settings, peer. Повторное открытие — просто фокус.
+/// Локальные окна: settings, peer, friends. Повторное открытие — просто фокус.
 pub fn open_local(app: &AppHandle, label: &str) {
     if let Some(window) = app.get_webview_window(label) {
         let _ = window.show();
@@ -186,6 +187,7 @@ pub fn open_local(app: &AppHandle, label: &str) {
     let (file, title, width, height) = match label {
         "settings" => ("settings.html", "Настройки — School 21", 600.0, 820.0),
         "peer" => ("peer.html", "Где сидит пир — School 21", 560.0, 760.0),
+        "friends" => ("friends.html", "Мои друзья — School 21", 560.0, 760.0),
         _ => return,
     };
     let _ = WebviewWindowBuilder::new(app, label, WebviewUrl::App(file.into()))
@@ -197,12 +199,16 @@ pub fn open_local(app: &AppHandle, label: &str) {
 }
 
 pub fn create_tray(app: &AppHandle) -> tauri::Result<()> {
+    let update_item = MenuItem::with_id(app, "update", "Проверить обновления", true, None::<&str>)?;
+    *app.state::<update::TrayItem>().0.lock().unwrap() = Some(update_item.clone());
     let menu = Menu::with_items(
         app,
         &[
             &MenuItem::with_id(app, "open", "Открыть School 21", true, None::<&str>)?,
             &MenuItem::with_id(app, "peer", "Где сидит пир", true, None::<&str>)?,
+            &MenuItem::with_id(app, "friends", "Мои друзья", true, None::<&str>)?,
             &MenuItem::with_id(app, "settings", "Настройки", true, None::<&str>)?,
+            &update_item,
             &PredefinedMenuItem::separator(app)?,
             &MenuItem::with_id(app, "quit", "Выход", true, None::<&str>)?,
         ],
@@ -214,6 +220,7 @@ pub fn create_tray(app: &AppHandle) -> tauri::Result<()> {
         .on_menu_event(|app, event| match event.id().as_ref() {
             "open" => show_main(app),
             "quit" => app.exit(0),
+            "update" => update::from_tray(app),
             other => open_local(app, other),
         })
         .on_tray_icon_event(|tray, event| {

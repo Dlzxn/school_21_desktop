@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "School 21",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "identifier": "ru.school21.desktop",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -21,7 +21,7 @@
     "targets": "all",
     "category": "Education",
     "shortDescription": "Неофициальный клиент платформы School 21",
-    "longDescription": "Платформа School 21 в отдельном окне: автовход, уведомления и напоминания в трее, мини-виджет со статистикой, поиск места пира в кампусе.",
+    "longDescription": "Платформа School 21 в отдельном окне: автовход, закладки, «Мои друзья», уведомления и напоминания в трее, поиск места пира в кампусе.",
     "copyright": "Dlzxn",
     "icon": [
       "icons/32x32.png",
@@ -31,7 +31,21 @@
       "icons/icon.ico"
     ],
     "windows": {
-      "webviewInstallMode": { "type": "downloadBootstrapper" }
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      }
+    },
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEUwMkM1MTBCQUJERjVCQTYKUldTbVc5K3JDMUVzNENQbFZCMWxxdHFEckFsak80bm1OL21EL0IzWC9tcTRSQVEraVZiR28yMkMK",
+      "endpoints": [
+        "https://github.com/Dlzxn/school_21_desktop/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
     }
   }
 }

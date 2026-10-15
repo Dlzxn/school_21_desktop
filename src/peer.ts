@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import {
-  $, errorText, escapeHtml, hours, num, openPlatform, openWindow, place,
+  $, errorText, escapeHtml, getInfo, hours, num, openPlatform, openWindow, place,
   type Coalition, type Points, type Workstation,
 } from "./common";
 import { renderIcons } from "./icons";
@@ -23,6 +23,7 @@ interface PeerInfo {
 }
 
 let ownLogin: string | null = null;
+let friends: string[] = [];
 
 function show(id: string, visible: boolean) {
   $(id).classList.toggle("hidden", !visible);
@@ -76,6 +77,21 @@ function render(info: PeerInfo) {
     : "";
   $("peer-logtime").textContent = info.logtime != null ? `Логтайм: ${hours(info.logtime)} ч (в среднем за неделю)` : "";
   $("open-profile").onclick = () => openPlatform(`/profile/${encodeURIComponent(p.login)}`);
+  const addFriend = $<HTMLButtonElement>("add-friend");
+  const isMe = p.login.toLowerCase() === ownLogin;
+  const isFriend = friends.includes(p.login.toLowerCase());
+  addFriend.classList.toggle("hidden", isMe);
+  addFriend.disabled = isFriend;
+  addFriend.textContent = isFriend ? "В друзьях" : "Добавить в друзья";
+  addFriend.onclick = async () => {
+    addFriend.disabled = true;
+    try {
+      friends.push(await invoke<string>("friends_add", { login: p.login }));
+      addFriend.textContent = "В друзьях";
+    } catch (e) {
+      addFriend.textContent = String(e) === "limit" ? "Не больше 30 друзей" : String(e) === "already" ? "В друзьях" : errorText(e);
+    }
+  };
   show("result", true);
 }
 
@@ -89,6 +105,7 @@ $("open-settings").addEventListener("click", () => openWindow("settings"));
 async function init() {
   renderIcons();
   ownLogin = await invoke<string | null>("own_login");
+  friends = (await getInfo()).settings.friends;
   show("needs-login", !ownLogin);
   show("search-form", !!ownLogin);
   $<HTMLInputElement>("query").focus();

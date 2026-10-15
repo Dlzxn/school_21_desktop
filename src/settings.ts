@@ -79,14 +79,32 @@ $("logout").addEventListener("click", async () => {
   renderAccount(true);
 });
 
+let pendingUpdate: { version: string; url: string; installable: boolean } | null = null;
+
 $("check-update").addEventListener("click", async () => {
   const status = $("update-status");
+  // Второе нажатие после «Доступна версия» — поставить.
+  if (pendingUpdate) {
+    if (!pendingUpdate.installable) {
+      await openExternal(pendingUpdate.url);
+      return;
+    }
+    status.textContent = `Скачиваю версию ${pendingUpdate.version}… приложение перезапустится`;
+    try {
+      await invoke("install_update");
+    } catch {
+      status.textContent = "Не удалось обновить — откройте страницу релизов";
+      pendingUpdate = { ...pendingUpdate, installable: false, url: `${REPO}/releases/latest` };
+    }
+    return;
+  }
   status.textContent = "Проверяю…";
   try {
-    const update = await invoke<{ version: string; url: string } | null>("check_update");
-    if (update) {
-      status.textContent = `Доступна версия ${update.version} — открываю страницу загрузки`;
-      await openExternal(update.url);
+    pendingUpdate = await invoke<{ version: string; url: string; installable: boolean } | null>("check_update");
+    if (pendingUpdate) {
+      status.textContent = pendingUpdate.installable
+        ? `Доступна версия ${pendingUpdate.version} — нажмите, чтобы обновить`
+        : `Доступна версия ${pendingUpdate.version} — нажмите, чтобы открыть страницу загрузки`;
     } else {
       status.textContent = "У вас последняя версия";
     }
@@ -95,6 +113,7 @@ $("check-update").addEventListener("click", async () => {
   }
 });
 
+$("open-site").addEventListener("click", () => openExternal("https://sc21-apps.github.io"));
 $("open-repo").addEventListener("click", () => openExternal(REPO));
 $("report-bug").addEventListener("click", () => openExternal(`${REPO}/issues`));
 $("author").addEventListener("click", () => openExternal("https://github.com/Dlzxn"));

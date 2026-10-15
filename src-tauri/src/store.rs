@@ -1,5 +1,6 @@
 //! Хранение: пароль и токены — в хранилище ОС (keyring), настройки и кэш — JSON в папке приложения.
 
+use std::collections::HashMap;
 use std::path::PathBuf;
 
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -63,12 +64,18 @@ pub struct Settings {
     pub notify_platform: bool,
     pub notify_agenda: bool,
     pub notify_events: bool,
+    /// Уведомлять, когда друг пришёл в кампус.
+    pub notify_friends: bool,
+    /// Сам скачивать и ставить новые версии при запуске.
+    pub auto_update: bool,
     /// Крестик окна прячет приложение в трей, а не закрывает.
     pub close_to_tray: bool,
     /// Закреплённые страницы платформы (меню «⋯»).
     pub bookmarks: Vec<Bookmark>,
     /// С какой страницы открывать приложение; None — главная.
     pub start_url: Option<String>,
+    /// Логины друзей («Мои друзья»).
+    pub friends: Vec<String>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -83,9 +90,12 @@ impl Default for Settings {
             notify_platform: true,
             notify_agenda: true,
             notify_events: false,
+            notify_friends: false,
+            auto_update: true,
             close_to_tray: true,
             bookmarks: Vec::new(),
             start_url: None,
+            friends: Vec::new(),
         }
     }
 }
@@ -97,6 +107,8 @@ pub struct SyncState {
     /// None — ещё не было первой синхронизации (старое не показываем, только запоминаем).
     pub seen_platform: Option<Vec<String>>,
     pub seen_events: Option<Vec<String>>,
+    /// Где были друзья при прошлой проверке: логин → место («» — не в кампусе). None — ещё не проверяли.
+    pub friend_places: Option<HashMap<String, String>>,
 }
 
 pub fn read_json<T: DeserializeOwned + Default>(path: &PathBuf) -> T {

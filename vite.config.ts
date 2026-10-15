@@ -11,6 +11,7 @@ export default defineConfig({
       input: {
         settings: resolve(__dirname, "settings.html"),
         peer: resolve(__dirname, "peer.html"),
+        friends: resolve(__dirname, "friends.html"),
       },
     },
   },

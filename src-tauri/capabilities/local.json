@@ -1,8 +1,8 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "local-windows",
-  "description": "Только локальные окна приложения (настройки, «Где сидит пир»). Окно с сайтом платформы доступа к IPC не получает.",
-  "windows": ["settings", "peer"],
+  "description": "Только локальные окна приложения (настройки, «Где сидит пир», «Мои друзья»). Окно с сайтом платформы доступа к IPC не получает.",
+  "windows": ["settings", "peer", "friends"],
   "permissions": [
     "core:default",
     "core:window:allow-close",

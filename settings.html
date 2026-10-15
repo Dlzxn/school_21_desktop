@@ -95,6 +95,14 @@
           </div>
           <span class="switch"><input type="checkbox" data-setting="closeToTray" /><span></span></span>
         </label>
+        <label class="row">
+          <div class="icon green" data-icon="refresh"></div>
+          <div class="body">
+            <div class="label">Обновляться автоматически</div>
+            <div class="hint">Новая версия ставится сама при запуске приложения</div>
+          </div>
+          <span class="switch"><input type="checkbox" data-setting="autoUpdate" /><span></span></span>
+        </label>
       </div>
 
       <div class="section">О приложении</div>
@@ -104,6 +112,14 @@
           <div class="body">
             <div class="label">Проверить обновления</div>
             <div class="hint" id="update-status">Нажмите, чтобы проверить</div>
+          </div>
+          <div class="chevron">›</div>
+        </div>
+        <div class="row clickable" id="open-site">
+          <div class="icon green" data-icon="external"></div>
+          <div class="body">
+            <div class="label">Сайт School 21 Apps</div>
+            <div class="hint">sc21-apps.github.io — все версии и инструкции</div>
           </div>
           <div class="chevron">›</div>
         </div>
@@ -139,7 +155,7 @@
 
       <div class="note">
         Приложение не связано со Школой 21 официально: оно показывает сайт платформы и данные её API, только
-        читая их. Есть и версия для Android: github.com/Dlzxn/school_21_mobile
+        читая их. Есть версии для Android и iPhone — на sc21-apps.github.io
       </div>
     </main>
     <script type="module" src="/src/settings.ts"></script>
